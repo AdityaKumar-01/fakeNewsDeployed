@@ -39,26 +39,29 @@ def predictor(testNews):
     bow,words = [],word_tokenize(testNews)
     for word in words:
         bow.append(words.count(word))
-    word_dict = tfidf.vocabulary_
+    word_dict = transformer.vocabulary_
     inp = []
     for i in word_dict:
         inp.append(testNews.count(i[0]))
-    y_pred = GNB.predict(np.array(inp).reshape(1,20000))
+    y_pred = model.predict(np.array(inp).reshape(1,20000))
     return y_pred
 
 @app.route('/')
 def hello():
-    return "<h1>Hello</h1>"
+    return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    testNews = reuest.form['message']
+    testNews = request.form['message']
     testNews = removeTag(testNews)
     testNews=removeStopWords(testNews)
     testNews = removeSpec(testNews)
     testNews = stemming(testNews)
+    prediction = predictor(testNews)
     output = prediction[0]
-    
-    return render_template('index.html', prediction_text = f"{output} ")
+    if output == 0:
+        return render_template('index.html', prediction_text = " Fake ")  
+    else:
+        return render_template('index.html', prediction_text = " Legit ")
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
