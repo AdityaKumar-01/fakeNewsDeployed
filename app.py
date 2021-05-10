@@ -5,9 +5,10 @@ import re
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 model = pickle.load(open('model.pkl','rb'))
-
+transformer = pickle.load(open('transformer.pkl','rb'))
 app = Flask(__name__)
 
 
@@ -34,14 +35,28 @@ def stemming(text):
     ss = SnowballStemmer('english')
     return " ".join([ss.stem(w) for w in text])
 
+def predictor(testNews):
+    bow,words = [],word_tokenize(testNews)
+    for word in words:
+        bow.append(words.count(word))
+    word_dict = tfidf.vocabulary_
+    inp = []
+    for i in word_dict:
+        inp.append(testNews.count(i[0]))
+    y_pred = GNB.predict(np.array(inp).reshape(1,20000))
+    return y_pred
+
 @app.route('/')
 def hello():
     return "<h1>Hello</h1>"
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    
-    
+    testNews = reuest.form['message']
+    testNews = removeTag(testNews)
+    testNews=removeStopWords(testNews)
+    testNews = removeSpec(testNews)
+    testNews = stemming(testNews)
     output = prediction[0]
     
     return render_template('index.html', prediction_text = f"{output} ")
