@@ -60,8 +60,8 @@ def predict():
     prediction = predictor(testNews)
     output = prediction[0]
     if output == 0:
-        return render_template('index.html', prediction_text = " Fake ")  
+        return render_template('index.html', prediction_text = "The news is Fake ")  
     else:
-        return render_template('index.html', prediction_text = " Legit ")
+        return render_template('index.html', prediction_text = "The news is Legit ")
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
