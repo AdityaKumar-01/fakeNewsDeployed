@@ -1,3 +1,4 @@
+pros_cons
 wordnet
 stopwords
 SnowballStemmer
